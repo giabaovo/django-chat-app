@@ -1,0 +1,44 @@
+<div class="grid grid-cols-4 gap-4">
+    {% for room in page_rooms %}
+    <div class="p-4 rounded-xl {% if room.status == 'waiting' %}bg-emerald-100{% elif room.status == 'active' %}bg-yellow-100{% else %}bg-gray-100{% endif %}">
+        <h3 class="mb-4 text-lg">Chat</h3>
+
+        <p>
+            <b>ID: </b>{{ room.uuid }}<br>
+            <b>Name: </b>{{ room.client }}<br>
+            <b>Status: </b>{{ room.get_status_display }}<br>
+            <b>Agent: </b>{% firstof room.agent.name 'None yet...' %}
+        </p>
+
+        <a href="{% url "chat-admin-room" room.uuid %}" class="mt-4 inline-block py-2 px-6 bg-emerald-800 text-white rounded-xl">Join</a>
+
+        <a href="{% url "chat-admin-delete-room" room.uuid %}" class="mt-4 inline-block py-2 px-6 bg-rose-800 text-white rounded-xl">Delete</a>
+    </div>
+    {% endfor %}
+    
+    {% if page_rooms.has_other_pages %}
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        {% if page_rooms.has_previous %}
+        <a class="pagination-previous" href="?page={{ page_rooms.previous_page_number }}">Previous</a>
+        {% endif %}
+    
+        <ul class="pagination-list" style="display: inline-flex;">
+            {% for i in page_rooms.paginator.page_range %}
+            {% if page_rooms.number == i %}
+            <li>
+                <a class="pagination-link is-current">{{ i }}</a>
+            </li>
+            {% else %}
+            <li>
+                <a class="pagination-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+
+        {% if page_rooms.has_next %}
+        <a class="pagination-next" href="?page={{ page_rooms.next_page_number }}">Next</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+</div>
